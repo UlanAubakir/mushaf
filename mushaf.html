@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мусхаф — Хатт мектебі | Мушаф | Mushaf</title>
+<meta name="description" content="Трафаретный Мусхаф для обучения каллиграфии Корана. Обводи, учись, помни. Доставка по Казахстану и СНГ.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Noto+Naskh+Arabic:wght@400;500;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink: #0e0c08;
+    --parchment: #f5efe0;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --gold-dim: #7a6230;
+    --cream: #fdf8ee;
+    --text-dark: #1a1710;
+    --text-mid: #4a4030;
+    --text-light: #8a7a60;
+    --shadow: rgba(10,8,2,0.6);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    background: var(--ink);
+    color: var(--parchment);
+    font-family: 'Jost', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.15s ease, width 0.3s, height 0.3s, opacity 0.3s;
+    opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 2.5rem;
+    background: linear-gradient(to bottom, rgba(14,12,8,0.95) 0%, transparent 100%);
+  }
+  .nav-logo {
+    font-family: 'Noto Naskh Arabic', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--parchment);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+
+  /* LANG SWITCHER */
+  .lang-switch {
+    display: flex; gap: 0.4rem;
+  }
+  .lang-btn {
+    font-size: 0.65rem; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: none; border: 1px solid rgba(201,168,76,0.3);
+    color: var(--text-light); padding: 0.2rem 0.5rem;
+    cursor: pointer; transition: all 0.2s; border-radius: 2px;
+  }
+  .lang-btn.active, .lang-btn:hover {
+    border-color: var(--gold); color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 30%, #1a1408 0%, #0e0c08 60%);
+  }
+
+  /* Falling ayat rain */
+  .ayat-rain {
+    position: absolute; inset: 0;
+    overflow: hidden; pointer-events: none;
+  }
+  .ayat-line {
+    position: absolute; top: -10%;
+    font-family: 'Noto Naskh Arabic', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    opacity: 0;
+    white-space: nowrap;
+    animation: rainFall linear infinite;
+  }
+
+  @keyframes rainFall {
+    0%   { transform: translateY(0); opacity: 0; }
+    5%   { opacity: 0.15; }
+    85%  { opacity: 0.08; }
+    100% { transform: translateY(120vh); opacity: 0; }
+  }
+
+  /* Geometric ornament */
+  .geo-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    pointer-events: none;
+    animation: rotateSlow linear infinite;
+  }
+  @keyframes rotateSlow {
+    from { transform: translate(-50%,-50%) rotate(0deg); }
+    to   { transform: translate(-50%,-50%) rotate(360deg); }
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    max-width: 800px;
+  }
+
+  .hero-arabic {
+    font-family: 'Noto Naskh Arabic', serif;
+    font-size: clamp(2rem, 6vw, 4rem);
+    color: var(--gold);
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
+  }
+
+  .hero-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    font-style: italic;
+    color: var(--parchment);
+    opacity: 0;
+    animation: fadeUp 1s ease 0.7s forwards;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.6rem;
+  }
+
+  .hero-sub {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    opacity: 0;
+    animation: fadeUp 1s ease 1s forwards;
+    margin-bottom: 3rem;
+  }
+
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 0.8rem;
+    padding: 1rem 2.5rem;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.3s forwards;
+    position: relative; overflow: hidden;
+  }
+  .hero-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s ease;
+    z-index: -1;
+  }
+  .hero-cta:hover::before { transform: scaleX(1); }
+  .hero-cta:hover { color: var(--ink); }
+
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    opacity: 0; animation: fadeIn 1s ease 2s forwards;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%,100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+  }
+  .scroll-text {
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+
+  /* ===== SECTIONS COMMON ===== */
+  section {
+    position: relative;
+  }
+
+  .section-label {
+    font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold-dim); margin-bottom: 0.8rem;
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* ===== WHAT IS SECTION ===== */
+  #what {
+    background: var(--parchment);
+    color: var(--text-dark);
+    padding: 8rem 2rem;
+  }
+  .what-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+  }
+  .what-text .section-label { color: var(--gold-dim); }
+  .what-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.2;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+  }
+  .what-body {
+    font-size: 0.95rem; line-height: 1.8;
+    color: var(--text-mid);
+    margin-bottom: 1.2rem;
+  }
+  .what-body strong { color: var(--gold-dim); }
+
+  /* Book visual */
+  .book-visual {
+    position: relative; height: 360px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .book-page {
+    position: absolute;
+    width: 220px; height: 300px;
+    background: var(--cream);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 2px 8px 8px 2px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 0.4rem;
+    padding: 1.5rem;
+    box-shadow: 4px 4px 20px rgba(0,0,0,0.12);
+    transform-origin: left center;
+    transition: transform 0.6s ease, box-shadow 0.6s ease;
+  }
+  .book-page:nth-child(1) { transform: rotate(-3deg) translateX(-10px); z-index: 1; background: #f0e8d0; }
+  .book-page:nth-child(2) { transform: rotate(1deg); z-index: 2; }
+  .book-page:nth-child(3) { transform: rotate(4deg) translateX(10px); z-index: 3; }
+  .book-page:hover { transform: rotate(0) translateX(0) scale(1.03); z-index: 10; box-shadow: 8px 12px 40px rgba(0,0,0,0.2); }
+  .page-arabic {
+    font-family: 'Noto Naskh Arabic', serif;
+    font-size: 0.95rem; color: var(--gold-dim);
+    text-align: center; line-height: 2;
+    direction: rtl;
+  }
+  .page-lines {
+    width: 80%; border-top: 1px dashed rgba(201,168,76,0.5);
+    margin: 0.2rem 0;
+  }
+  .page-badge {
+    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-light); background: rgba(201,168,76,0.1);
+    padding: 0.2rem 0.5rem; border-radius: 2px;
+  }
+
+  /* ===== HOW IT WORKS ===== */
+  #how {
+    background: #100e09;
+    padding: 8rem 2rem;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+  .how-inner {
+    max-width: 1000px; margin: 0 auto;
+    text-align: center;
+  }
+  .how-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--parchment);
+    margin-bottom: 1rem;
+  }
+  .how-sub {
+    font-size: 0.85rem; color: var(--text-light);
+    margin-bottom: 4rem; line-height: 1.7;
+    max-width: 600px; margin-left: auto; margin-right: auto;
+  }
+  .steps {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+    margin-bottom: 4rem;
+  }
+  .step {
+    padding: 2rem 1.5rem;
+    border: 1px solid rgba(201,168,76,0.15);
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .step:hover { border-color: var(--gold); }
+  .step::before {
+    content: attr(data-num);
+    position: absolute; top: -1rem; left: 50%; transform: translateX(-50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem; color: rgba(201,168,76,0.15);
+    line-height: 1;
+  }
+  .step-icon {
+    font-size: 2.5rem; margin-bottom: 1rem; display: block;
+  }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+  .step-text {
+    font-size: 0.82rem; color: var(--text-light); line-height: 1.7;
+  }
+  .eraser-note {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(201,168,76,0.05);
+    border: 1px solid rgba(201,168,76,0.2);
+    font-size: 0.8rem; color: var(--gold-light);
+    border-radius: 2px;
+  }
+
+  /* ===== PRODUCT SECTION ===== */
+  #product {
+    background: var(--parchment);
+    padding: 8rem 2rem;
+    color: var(--text-dark);
+  }
+  .product-inner {
+    max-width: 1000px; margin: 0 auto;
+  }
+  .product-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    margin-bottom: 0.5rem;
+  }
+  .product-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem;
+  }
+  .product-card {
+    background: var(--cream);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 2.5rem;
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+  }
+  .product-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, #fffef8 0%, #fdf5dc 100%);
+  }
+  .product-card.featured::before {
+    content: 'Популярный';
+    position: absolute; top: -1px; right: 1.5rem;
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+    background: var(--gold); color: var(--ink);
+    padding: 0.25rem 0.7rem;
+  }
+  .product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; color: var(--text-dark); margin-bottom: 0.3rem;
+  }
+  .product-price {
+    font-size: 2rem; font-weight: 300; color: var(--gold-dim);
+    margin-bottom: 1rem;
+  }
+  .product-price span { font-size: 0.9rem; }
+  .product-features {
+    list-style: none; margin-bottom: 1.5rem;
+  }
+  .product-features li {
+    font-size: 0.82rem; color: var(--text-mid);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .product-features li::before { content: '✦'; color: var(--gold); font-size: 0.5rem; }
+  .buy-btn {
+    width: 100%; padding: 0.9rem;
+    background: none; border: 1px solid var(--gold-dim);
+    color: var(--gold-dim);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .buy-btn:hover, .product-card.featured .buy-btn {
+    background: var(--gold-dim); color: var(--cream);
+  }
+
+  /* ===== ORDER FORM ===== */
+  #order {
+    background: #100e09;
+    padding: 8rem 2rem;
+  }
+  .order-inner {
+    max-width: 640px; margin: 0 auto; text-align: center;
+  }
+  .order-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--parchment); margin-bottom: 0.5rem;
+  }
+  .order-sub {
+    font-size: 0.82rem; color: var(--text-light);
+    margin-bottom: 3rem; line-height: 1.7;
+  }
+  .order-form {
+    display: flex; flex-direction: column; gap: 1rem;
+    text-align: left;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-label {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-light);
+  }
+  .form-input, .form-select, .form-textarea {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--parchment);
+    padding: 0.8rem 1rem;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--gold);
+  }
+  .form-select option { background: #1a1710; }
+  .form-textarea { min-height: 90px; resize: vertical; }
+  .payment-methods {
+    display: flex; gap: 1rem; margin-top: 0.5rem;
+  }
+  .pay-method {
+    flex: 1; padding: 0.7rem;
+    border: 1px solid rgba(201,168,76,0.2);
+    background: none; color: var(--text-light);
+    font-size: 0.75rem; cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .pay-method.selected { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.05); }
+  .submit-btn {
+    padding: 1.1rem;
+    background: var(--gold);
+    border: none; color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; transition: background 0.3s, transform 0.2s;
+    margin-top: 0.5rem;
+  }
+  .submit-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .form-note {
+    font-size: 0.72rem; color: var(--text-light);
+    text-align: center; line-height: 1.6; margin-top: 0.5rem;
+  }
+  .form-success {
+    display: none;
+    text-align: center; padding: 3rem;
+    border: 1px solid var(--gold);
+    color: var(--parchment);
+  }
+  .form-success.show { display: block; }
+  .form-success .check { font-size: 3rem; color: var(--gold); margin-bottom: 1rem; }
+
+  /* ===== ORNAMENT DIVIDER ===== */
+  .ornament {
+    text-align: center; padding: 2rem 0;
+    color: var(--gold); font-size: 1.2rem;
+    opacity: 0.4; letter-spacing: 0.5rem;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: #080706;
+    padding: 4rem 2rem 2rem;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Noto Naskh Arabic', serif;
+    font-size: 2rem; color: var(--gold);
+    display: block; margin-bottom: 0.5rem;
+  }
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 0.9rem;
+    color: var(--text-light); margin-bottom: 2rem;
+  }
+  .footer-links {
+    display: flex; justify-content: center; gap: 2rem;
+    list-style: none; flex-wrap: wrap; margin-bottom: 2rem;
+  }
+  .footer-links a {
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-light); text-decoration: none; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-copy {
+    font-size: 0.65rem; color: var(--gold-dim); opacity: 0.6;
+  }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.2rem; }
+    .nav-links { display: none; }
+    .what-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .book-visual { height: 260px; }
+    .book-page { width: 160px; height: 220px; }
+    .steps { grid-template-columns: 1fr; gap: 1.5rem; }
+    .product-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .payment-methods { flex-direction: column; }
+    body { cursor: default; }
+    .cursor, .cursor-ring { display: none; }
+  }
+
+  /* multilang */
+  [data-lang] { display: none; }
+  [data-lang].active-lang { display: block; }
+  [data-lang-inline] { display: none; }
+  [data-lang-inline].active-lang { display: inline; }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">مصحف</a>
+  <ul class="nav-links">
+    <li><a href="#what" data-nav-kk="Бұл не?" data-nav-ru="О продукте" data-nav-en="About">О продукте</a></li>
+    <li><a href="#how" data-nav-kk="Қалай?" data-nav-ru="Как это работает" data-nav-en="How it works">Как это работает</a></li>
+    <li><a href="#product" data-nav-kk="Баға" data-nav-ru="Цены" data-nav-en="Prices">Цены</a></li>
+    <li><a href="#order" data-nav-kk="Тапсырыс" data-nav-ru="Заказать" data-nav-en="Order">Заказать</a></li>
+  </ul>
+  <div class="lang-switch">
+    <button class="lang-btn" data-lang-target="kk">ҚАЗ</button>
+    <button class="lang-btn active" data-lang-target="ru">РУС</button>
+    <button class="lang-btn" data-lang-target="en">ENG</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="ayat-rain" id="ayatRain"></div>
+
+  <!-- Geometric rings -->
+  <div class="geo-ring" style="width:500px;height:500px;left:50%;top:50%;border-color:rgba(201,168,76,0.04);animation-duration:80s;"></div>
+  <div class="geo-ring" style="width:350px;height:350px;left:50%;top:50%;border-color:rgba(201,168,76,0.07);animation-duration:50s;animation-direction:reverse;"></div>
+  <div class="geo-ring" style="width:200px;height:200px;left:50%;top:50%;border-color:rgba(201,168,76,0.1);animation-duration:30s;"></div>
+
+  <div class="hero-content">
+    <div class="hero-arabic">
+      <span data-lang="ru" class="active-lang">اقْرَأْ بِاسْمِ رَبِّكَ</span>
+      <span data-lang="kk">اقْرَأْ بِاسْمِ رَبِّكَ</span>
+      <span data-lang="en">اقْرَأْ بِاسْمِ رَبِّكَ</span>
+    </div>
+    <p class="hero-tagline">
+      <span data-lang="ru" class="active-lang">«Читай именем Господа твоего» — Аль-Алак, 1</span>
+      <span data-lang="kk">«Жаратушы Раббыңның атымен оқы» — Ғалақ, 1</span>
+      <span data-lang="en">"Read in the name of your Lord" — Al-Alaq, 1</span>
+    </p>
+    <p class="hero-sub">
+      <span data-lang="ru" class="active-lang">Трафаретный Мусхаф · Обводи · Учись · Помни</span>
+      <span data-lang="kk">Трафарет Мұсхаф · Жаз · Үйрен · Есте сақта</span>
+      <span data-lang="en">Tracing Mushaf · Trace · Learn · Remember</span>
+    </p>
+    <a href="#order" class="hero-cta">
+      <span data-lang="ru" class="active-lang">Заказать сейчас</span>
+      <span data-lang="kk">Қазір тапсырыс беру</span>
+      <span data-lang="en">Order Now</span>
+    </a>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- WHAT IS -->
+<section id="what">
+  <div class="what-inner">
+    <div class="what-text reveal">
+      <p class="section-label">
+        <span data-lang="ru" class="active-lang">О продукте</span>
+        <span data-lang="kk">Өнім туралы</span>
+        <span data-lang="en">About the product</span>
+      </p>
+      <h2 class="what-heading">
+        <span data-lang="ru" class="active-lang">Первый в СНГ трафаретный Мусхаф</span>
+        <span data-lang="kk">БМД-дағы алғашқы трафарет Мұсхаф</span>
+        <span data-lang="en">First tracing Mushaf in the CIS</span>
+      </h2>
+      <p class="what-body">
+        <span data-lang="ru" class="active-lang">Мусхаф — это не просто тетрадь. Это <strong>трафарет священного текста</strong>: каждый аят напечатан тонкими контурами, и ты обводишь их ручкой или карандашом, буква за буквой.</span>
+        <span data-lang="kk">Мұсхаф — бұл жай дәптер емес. Бұл <strong>киелі мәтіннің трафареті</strong>: әр аят жұқа контурмен басылып, сен оны қаламмен немесе қарындашпен бойлайсың.</span>
+        <span data-lang="en">Mushaf is not just a notebook. It's a <strong>stencil of sacred text</strong>: each verse is printed as a thin outline, and you trace it with a pen or pencil, letter by letter.</span>
+      </p>
+      <p class="what-body">
+        <span data-lang="ru" class="active-lang">Мышечная память, концентрация, тилава — всё это рождается через движение руки. Если ошибся — <strong>специальная стираемая ручка</strong> позволяет начать снова.</span>
+        <span data-lang="kk">Бұлшықет жады, зейін, тілауат — бәрі қол қозғалысы арқылы дамиды. Қате болса — <strong>арнайы өшіретін қалам</strong> қайта бастауға мүмкіндік береді.</span>
+        <span data-lang="en">Muscle memory, concentration, tilawa — all cultivated through hand movement. Made a mistake? A <strong>special erasable pen</strong> lets you start again.</span>
+      </p>
+    </div>
+
+    <div class="book-visual reveal" style="transition-delay:0.2s;">
+      <div class="book-page">
+        <div class="page-arabic">بِسْمِ اللَّهِ<br>الرَّحْمَٰنِ<br>الرَّحِيمِ</div>
+        <div class="page-lines"></div>
+        <div class="page-lines"></div>
+        <div class="page-badge">Трафарет</div>
+      </div>
+      <div class="book-page">
+        <div class="page-arabic">الْحَمْدُ لِلَّهِ<br>رَبِّ الْعَالَمِينَ</div>
+        <div class="page-lines"></div>
+        <div class="page-lines"></div>
+        <div class="page-badge">Обводи</div>
+      </div>
+      <div class="book-page">
+        <div class="page-arabic">إِيَّاكَ نَعْبُدُ<br>وَإِيَّاكَ نَسْتَعِينُ</div>
+        <div class="page-lines"></div>
+        <div class="page-badge">Запоминай</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="how-inner">
+    <div class="reveal">
+      <p class="section-label" style="text-align:center;">
+        <span data-lang="ru" class="active-lang">Метод</span>
+        <span data-lang="kk">Әдіс</span>
+        <span data-lang="en">Method</span>
+      </p>
+      <h2 class="how-heading">
+        <span data-lang="ru" class="active-lang">Три шага к каллиграфии</span>
+        <span data-lang="kk">Каллиграфияға үш қадам</span>
+        <span data-lang="en">Three steps to calligraphy</span>
+      </h2>
+      <p class="how-sub">
+        <span data-lang="ru" class="active-lang">Никаких предварительных знаний. Только ручка, бумага и намерение.</span>
+        <span data-lang="kk">Алдын ала білім қажет емес. Тек қалам, қағаз және ниет.</span>
+        <span data-lang="en">No prior knowledge needed. Just a pen, paper, and intention.</span>
+      </p>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal" data-num="١" style="transition-delay:0.1s;">
+        <span class="step-icon">📖</span>
+        <div class="step-title">
+          <span data-lang="ru" class="active-lang">Смотри</span>
+          <span data-lang="kk">Қара</span>
+          <span data-lang="en">See</span>
+        </div>
+        <p class="step-text">
+          <span data-lang="ru" class="active-lang">Открой страницу — перед тобой контур аята. Рассмотри форму каждой буквы.</span>
+          <span data-lang="kk">Бетті аш — алдыңда аят контуры. Әр әріптің пішінін зертте.</span>
+          <span data-lang="en">Open the page — the verse outline is before you. Study the shape of each letter.</span>
+        </p>
+      </div>
+      <div class="step reveal" data-num="٢" style="transition-delay:0.2s;">
+        <span class="step-icon">✍️</span>
+        <div class="step-title">
+          <span data-lang="ru" class="active-lang">Обводи</span>
+          <span data-lang="kk">Жаз</span>
+          <span data-lang="en">Trace</span>
+        </div>
+        <p class="step-text">
+          <span data-lang="ru" class="active-lang">Веди ручку по контуру медленно. Тело запоминает путь пера.</span>
+          <span data-lang="kk">Қаламды контур бойынша жай жүргіз. Дене қалам жолын есте сақтайды.</span>
+          <span data-lang="en">Move the pen along the outline slowly. The body memorizes the pen's path.</span>
+        </p>
+      </div>
+      <div class="step reveal" data-num="٣" style="transition-delay:0.3s;">
+        <span class="step-icon">🌙</span>
+        <div class="step-title">
+          <span data-lang="ru" class="active-lang">Повторяй</span>
+          <span data-lang="kk">Қайтала</span>
+          <span data-lang="en">Repeat</span>
+        </div>
+        <p class="step-text">
+          <span data-lang="ru" class="active-lang">Стираемая ручка — начни снова. Каждый повтор глубже врезает аят в память.</span>
+          <span data-lang="kk">Өшіретін қаламмен қайта баста. Әр қайталау аятты жадыңа тереңірек өрнектейді.</span>
+          <span data-lang="en">Erasable pen — start again. Each repeat engraves the verse deeper into memory.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="reveal" style="transition-delay:0.4s;">
+      <div class="eraser-note">
+        <span>✦</span>
+        <span data-lang="ru" class="active-lang">Специальная стираемая ручка входит в комплект — ошибки исправляются, текст остаётся неизменным</span>
+        <span data-lang="kk">Арнайы өшіретін қалам жинақта бар — қателер түзетіледі, мәтін өзгермейді</span>
+        <span data-lang="en">Special erasable pen included — mistakes corrected, sacred text remains unchanged</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT / PRICING -->
+<section id="product">
+  <div class="product-inner">
+    <div class="reveal" style="text-align:center;">
+      <p class="section-label" style="text-align:center; color:var(--gold-dim);">
+        <span data-lang="ru" class="active-lang">Комплекты</span>
+        <span data-lang="kk">Жинақтар</span>
+        <span data-lang="en">Sets</span>
+      </p>
+      <h2 class="product-heading">
+        <span data-lang="ru" class="active-lang">Выберите свой Мусхаф</span>
+        <span data-lang="kk">Өз Мұсхафыңды таңда</span>
+        <span data-lang="en">Choose your Mushaf</span>
+      </h2>
+    </div>
+
+    <div class="product-grid">
+      <div class="product-card reveal" style="transition-delay:0.1s;">
+        <div class="product-name">
+          <span data-lang="ru" class="active-lang">Базовый</span>
+          <span data-lang="kk">Негізгі</span>
+          <span data-lang="en">Basic</span>
+        </div>
+        <div class="product-price">4 990 <span>тг</span></div>
+        <ul class="product-features">
+          <li>
+            <span data-lang="ru" class="active-lang">Трафаретный Мусхаф (Джуз Амма)</span>
+            <span data-lang="kk">Трафарет Мұсхаф (Жуз Амма)</span>
+            <span data-lang="en">Tracing Mushaf (Juz Amma)</span>
+          </li>
+          <li>
+            <span data-lang="ru" class="active-lang">Стираемая ручка × 1</span>
+            <span data-lang="kk">Өшіретін қалам × 1</span>
+            <span data-lang="en">Erasable pen × 1</span>
+          </li>
+          <li>
+            <span data-lang="ru" class="active-lang">Инструкция на 3 языках</span>
+            <span data-lang="kk">3 тілдегі нұсқаулық</span>
+            <span data-lang="en">3-language guide</span>
+          </li>
+        </ul>
+        <button class="buy-btn" onclick="scrollToOrder('basic')">
+          <span data-lang="ru" class="active-lang">Заказать</span>
+          <span data-lang="kk">Тапсырыс</span>
+          <span data-lang="en">Order</span>
+        </button>
+      </div>
+
+      <div class="product-card featured reveal" style="transition-delay:0.2s;">
+        <div class="product-name">
+          <span data-lang="ru" class="active-lang">Полный комплект</span>
+          <span data-lang="kk">Толық жинақ</span>
+          <span data-lang="en">Full Set</span>
+        </div>
+        <div class="product-price">9 990 <span>тг</span></div>
+        <ul class="product-features">
+          <li>
+            <span data-lang="ru" class="active-lang">Трафаретный Мусхаф (Полный)</span>
+            <span data-lang="kk">Трафарет Мұсхаф (Толық)</span>
+            <span data-lang="en">Full Tracing Mushaf</span>
+          </li>
+          <li>
+            <span data-lang="ru" class="active-lang">Стираемые ручки × 3 (цветные)</span>
+            <span data-lang="kk">Өшіретін қалам × 3 (түрлі-түсті)</span>
+            <span data-lang="en">Erasable pens × 3 (colors)</span>
+          </li>
+          <li>
+            <span data-lang="ru" class="active-lang">Подарочная упаковка</span>
+            <span data-lang="kk">Сыйлық орауышы</span>
+            <span data-lang="en">Gift packaging</span>
+          </li>
+          <li>
+            <span data-lang="ru" class="active-lang">Доставка по Казахстану бесплатно</span>
+            <span data-lang="kk">Қазақстан бойынша тегін жеткізу</span>
+            <span data-lang="en">Free delivery in Kazakhstan</span>
+          </li>
+        </ul>
+        <button class="buy-btn" onclick="scrollToOrder('full')">
+          <span data-lang="ru" class="active-lang">Заказать</span>
+          <span data-lang="kk">Тапсырыс</span>
+          <span data-lang="en">Order</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER FORM -->
+<section id="order">
+  <div class="order-inner">
+    <div class="reveal">
+      <p class="section-label" style="text-align:center;">
+        <span data-lang="ru" class="active-lang">Оформить заказ</span>
+        <span data-lang="kk">Тапсырыс беру</span>
+        <span data-lang="en">Place an Order</span>
+      </p>
+      <h2 class="order-heading">
+        <span data-lang="ru" class="active-lang">Доставим в любую точку Казахстана и СНГ</span>
+        <span data-lang="kk">Қазақстан мен БМД бойынша жеткіземіз</span>
+        <span data-lang="en">We deliver across Kazakhstan and CIS</span>
+      </h2>
+      <p class="order-sub">
+        <span data-lang="ru" class="active-lang">Заполните форму — мы свяжемся с вами в течение 1 часа для подтверждения и оплаты через Kaspi Pay или другим удобным способом.</span>
+        <span data-lang="kk">Форманы толтырыңыз — 1 сағат ішінде хабарласып, Kaspi Pay немесе басқа ыңғайлы тәсілмен төлемді растаймыз.</span>
+        <span data-lang="en">Fill out the form — we'll contact you within 1 hour to confirm and collect payment via Kaspi Pay or other method.</span>
+      </p>
+    </div>
+
+    <div class="reveal" style="transition-delay:0.15s;">
+      <div id="orderForm" class="order-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <span data-lang="ru" class="active-lang">Ваше имя</span>
+              <span data-lang="kk">Атыңыз</span>
+              <span data-lang="en">Your Name</span>
+            </label>
+            <input class="form-input" type="text" id="fname" placeholder="Асель Нурланова" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              <span data-lang="ru" class="active-lang">Номер телефона</span>
+              <span data-lang="kk">Телефон нөмірі</span>
+              <span data-lang="en">Phone Number</span>
+            </label>
+            <input class="form-input" type="tel" id="fphone" placeholder="+7 700 000 00 00" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span data-lang="ru" class="active-lang">Город / Адрес доставки</span>
+            <span data-lang="kk">Қала / Жеткізу мекенжайы</span>
+            <span data-lang="en">City / Delivery Address</span>
+          </label>
+          <input class="form-input" type="text" id="fcity" placeholder="Астана, ул. Сауран 34" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span data-lang="ru" class="active-lang">Комплект</span>
+            <span data-lang="kk">Жинақ</span>
+            <span data-lang="en">Set</span>
+          </label>
+          <select class="form-select" id="fproduct">
+            <option value="basic">Базовый — 4 990 тг</option>
+            <option value="full">Полный комплект — 9 990 тг</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span data-lang="ru" class="active-lang">Способ оплаты</span>
+            <span data-lang="kk">Төлем тәсілі</span>
+            <span data-lang="en">Payment Method</span>
+          </label>
+          <div class="payment-methods">
+            <button class="pay-method selected" data-pay="kaspi" onclick="selectPay(this)">
+              💳 Kaspi Pay
+            </button>
+            <button class="pay-method" data-pay="transfer" onclick="selectPay(this)">
+              🏦
+              <span data-lang="ru" class="active-lang">Перевод</span>
+              <span data-lang="kk">Аудару</span>
+              <span data-lang="en">Transfer</span>
+            </button>
+            <button class="pay-method" data-pay="cod" onclick="selectPay(this)">
+              📦
+              <span data-lang="ru" class="active-lang">При получении</span>
+              <span data-lang="kk">Алғанда</span>
+              <span data-lang="en">On delivery</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span data-lang="ru" class="active-lang">Комментарий (необязательно)</span>
+            <span data-lang="kk">Пікір (міндетті емес)</span>
+            <span data-lang="en">Comment (optional)</span>
+          </label>
+          <textarea class="form-textarea" id="fcomment" placeholder="Подарок для мамы, добавьте открытку..."></textarea>
+        </div>
+
+        <button class="submit-btn" onclick="submitOrder()">
+          <span data-lang="ru" class="active-lang">Оформить заказ →</span>
+          <span data-lang="kk">Тапсырыс беру →</span>
+          <span data-lang="en">Place Order →</span>
+        </button>
+
+        <p class="form-note">
+          <span data-lang="ru" class="active-lang">Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Мы не передаём ваши данные третьим лицам.</span>
+          <span data-lang="kk">Түймені басу арқылы дербес деректерді өңдеуге келісесіз. Деректеріңізді үшінші тарапқа бермейміз.</span>
+          <span data-lang="en">By clicking, you agree to data processing. We do not share your data with third parties.</span>
+        </p>
+      </div>
+
+      <div id="formSuccess" class="form-success">
+        <div class="check">✦</div>
+        <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; margin-bottom:1rem;">
+          <span data-lang="ru" class="active-lang">ДжазакАллахуХайран!</span>
+          <span data-lang="kk">ДжазакАллаһуХайран!</span>
+          <span data-lang="en">JazakAllahKhayran!</span>
+        </h3>
+        <p style="color:var(--text-light); font-size:0.9rem; line-height:1.7;">
+          <span data-lang="ru" class="active-lang">Ваш заказ принят. Мы свяжемся с вами в течение 1 часа.</span>
+          <span data-lang="kk">Тапсырысыңыз қабылданды. 1 сағат ішінде хабарласамыз.</span>
+          <span data-lang="en">Your order is received. We'll contact you within 1 hour.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ornament">✦ ✦ ✦</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">مصحف</span>
+  <p class="footer-tagline">
+    <span data-lang="ru" class="active-lang">Пиши. Учись. Помни.</span>
+    <span data-lang="kk">Жаз. Үйрен. Есте сақта.</span>
+    <span data-lang="en">Write. Learn. Remember.</span>
+  </p>
+  <ul class="footer-links">
+    <li><a href="mailto:info@mushaf.kz">info@mushaf.kz</a></li>
+    <li><a href="tel:+77001234567">+7 700 XXX XXXX</a></li>
+    <li><a href="#">Instagram</a></li>
+    <li><a href="#">Telegram</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 mushaf.kz · Астана, Казахстан</p>
+</footer>
+
+<script>
+// ===== CURSOR =====
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  setTimeout(() => {
+    cursorRing.style.left = e.clientX + 'px';
+    cursorRing.style.top = e.clientY + 'px';
+  }, 60);
+});
+
+// ===== AYAT RAIN =====
+const ayat = [
+  'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+  'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+  'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
+  'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+  'قُلْ هُوَ اللَّهُ أَحَدٌ',
+  'اللَّهُ الصَّمَدُ',
+  'سُبْحَانَ رَبِّيَ الْعَظِيمِ',
+  'رَبِّ زِدْنِي عِلْمًا',
+  'إِنَّ مَعَ الْعُسْرِ يُسْرًا',
+];
+
+const rain = document.getElementById('ayatRain');
+function createDrop() {
+  const el = document.createElement('div');
+  el.className = 'ayat-line';
+  el.textContent = ayat[Math.floor(Math.random() * ayat.length)];
+  el.style.left = Math.random() * 95 + '%';
+  const dur = 12 + Math.random() * 16;
+  el.style.animationDuration = dur + 's';
+  el.style.animationDelay = Math.random() * 5 + 's';
+  el.style.fontSize = (0.7 + Math.random() * 0.6) + 'rem';
+  rain.appendChild(el);
+  setTimeout(() => el.remove(), (dur + 5) * 1000);
+}
+for (let i = 0; i < 12; i++) setTimeout(createDrop, i * 800);
+setInterval(createDrop, 2200);
+
+// ===== SCROLL REVEAL =====
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+reveals.forEach(r => observer.observe(r));
+
+// ===== LANGUAGE SWITCH =====
+let currentLang = 'ru';
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const lang = btn.dataset.langTarget;
+    currentLang = lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('[data-lang]').forEach(el => {
+      el.classList.toggle('active-lang', el.dataset.lang === lang);
+    });
+    document.querySelectorAll('[data-lang-inline]').forEach(el => {
+      el.classList.toggle('active-lang', el.dataset.langInline === lang);
+    });
+
+    // Nav links
+    document.querySelectorAll('[data-nav-' + lang + ']').forEach(el => {
+      el.textContent = el.dataset['nav' + lang.charAt(0).toUpperCase() + lang.slice(1)];
+    });
+  });
+});
+
+// ===== PAYMENT METHOD =====
+let selectedPay = 'kaspi';
+function selectPay(el) {
+  document.querySelectorAll('.pay-method').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPay = el.dataset.pay;
+}
+
+// ===== SCROLL TO ORDER =====
+function scrollToOrder(product) {
+  document.getElementById('fproduct').value = product;
+  document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ===== ORDER SUBMIT =====
+function submitOrder() {
+  const name = document.getElementById('fname').value.trim();
+  const phone = document.getElementById('fphone').value.trim();
+  const city = document.getElementById('fcity').value.trim();
+
+  if (!name || !phone || !city) {
+    alert(currentLang === 'kk' ? 'Барлық міндетті өрістерді толтырыңыз' :
+          currentLang === 'en' ? 'Please fill in all required fields' :
+          'Пожалуйста, заполните все обязательные поля');
+    return;
+  }
+
+  // In production: integrate ApiPay.kz here
+  // POST to your backend → ApiPay.kz API → send invoice to customer's Kaspi
+
+  const product = document.getElementById('fproduct').value;
+  const comment = document.getElementById('fcomment').value;
+
+  // Telegram bot notification (replace BOT_TOKEN and CHAT_ID)
+  const msg = `🕌 Новый заказ mushaf.kz\n\nИмя: ${name}\nТел: ${phone}\nГород: ${city}\nКомплект: ${product}\nОплата: ${selectedPay}\nКомментарий: ${comment}`;
+
+  // For now show success (backend integration needed)
+  document.getElementById('orderForm').style.display = 'none';
+  document.getElementById('formSuccess').classList.add('show');
+}
+
+// ===== NAV SCROLL EFFECT =====
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 50) {
+    nav.style.background = 'rgba(14,12,8,0.97)';
+  } else {
+    nav.style.background = 'linear-gradient(to bottom, rgba(14,12,8,0.95) 0%, transparent 100%)';
+  }
+});
+</script>
+</body>
+</html>
